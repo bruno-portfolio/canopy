@@ -39,8 +39,13 @@ def _truncate(module_name: str, depth: int) -> str:
     return ".".join(parts[:depth])
 
 
-def _strip_source_prefix(path: str, source_prefix: str) -> str:
+def _strip_source_prefix(path: str, source_prefix: str, source_path: str = "") -> str:
     normalized = normalize_path(path)
+    # Handle absolute paths from collectors by making them relative to source_path
+    if source_path:
+        norm_source = normalize_path(source_path).rstrip("/") + "/"
+        if normalized.startswith(norm_source):
+            return normalized[len(norm_source) :]
     if source_prefix and normalized.startswith(source_prefix):
         return normalized[len(source_prefix) :]
     return normalized
@@ -65,8 +70,9 @@ def _path_to_module(
     source_prefix: str,
     root_package: str,
     depth: int,
+    source_path: str = "",
 ) -> str:
-    stripped = _strip_source_prefix(path, source_prefix)
+    stripped = _strip_source_prefix(path, source_prefix, source_path)
     return _relative_path_to_module(stripped, root_package, depth)
 
 
@@ -91,10 +97,11 @@ def _process_radon(
     source_prefix: str,
     root_package: str,
     depth: int,
+    source_path: str = "",
 ) -> dict[str, _RadonAccum]:
     accum: dict[str, _RadonAccum] = {}
     for result in radon_results:
-        relative = _strip_source_prefix(result.path, source_prefix)
+        relative = _strip_source_prefix(result.path, source_prefix, source_path)
         module = _relative_path_to_module(relative, root_package, depth)
         lines = file_lines.get(relative, 0)
 
@@ -119,10 +126,11 @@ def _process_vulture(
     source_prefix: str,
     root_package: str,
     depth: int,
+    source_path: str = "",
 ) -> dict[str, int]:
     counts: dict[str, int] = {}
     for result in vulture_results:
-        module = _path_to_module(result.path, source_prefix, root_package, depth)
+        module = _path_to_module(result.path, source_prefix, root_package, depth, source_path)
         counts[module] = counts.get(module, 0) + 1
     return counts
 
@@ -132,10 +140,11 @@ def _process_churn(
     source_prefix: str,
     root_package: str,
     depth: int,
+    source_path: str = "",
 ) -> dict[str, int]:
     totals: dict[str, int] = {}
     for result in churn_results:
-        module = _path_to_module(result.path, source_prefix, root_package, depth)
+        module = _path_to_module(result.path, source_prefix, root_package, depth, source_path)
         totals[module] = totals.get(module, 0) + result.commit_count
     return totals
 
@@ -185,9 +194,9 @@ def aggregate(
         module = _relative_path_to_module(rel_path, root, depth)
         module_lines[module] = module_lines.get(module, 0) + lines
 
-    radon_data = _process_radon(radon, file_data, prefix, root, depth)
-    vulture_data = _process_vulture(vulture, prefix, root, depth)
-    churn_data = _process_churn(churn, prefix, root, depth)
+    radon_data = _process_radon(radon, file_data, prefix, root, depth, source_path)
+    vulture_data = _process_vulture(vulture, prefix, root, depth, source_path)
+    churn_data = _process_churn(churn, prefix, root, depth, source_path)
     deps = _process_imports(imports, root, depth)
 
     all_modules = set(module_lines.keys())
