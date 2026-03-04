@@ -74,21 +74,11 @@
 <text x="440.6" y="237.2" font-family="monospace" font-size="8" font-weight="600" fill="#484f58" text-anchor="start" transform="rotate(-70 440.6 237.2)">Layout</text>
 <text x="415.4" y="168.3" font-family="monospace" font-size="8" font-weight="600" fill="#484f58" text-anchor="start" transform="rotate(-70 415.4 168.3)">Render</text>
 <text x="390.3" y="99.4" font-family="monospace" font-size="8" font-weight="600" fill="#484f58" text-anchor="start" transform="rotate(-70 390.3 99.4)">Uncategorized</text>
-<line x1="545.8" y1="400.0" x2="708.8" y2="168.1" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<line x1="545.8" y1="400.0" x2="466.6" y2="81.8" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<line x1="545.8" y1="400.0" x2="580.9" y2="458.8" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<line x1="545.8" y1="400.0" x2="446.4" y2="564.8" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<line x1="545.8" y1="400.0" x2="253.3" y2="400.0" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<line x1="500.0" y1="354.2" x2="708.8" y2="168.1" stroke="#bc8cff" stroke-width="0.5" opacity="0.12"/>
-<path d="M466.6,81.8 Q561.4,207.4 708.8,168.1" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M466.6,81.8 Q516.6,309.2 580.9,458.8" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M580.9,458.8 Q601.4,339.4 708.8,168.1" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M446.4,564.8 Q554.3,376.5 708.8,168.1" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M446.4,564.8 Q481.2,441.7 500.0,354.2" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M446.4,564.8 Q481.2,473.7 500.0,445.8" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M253.3,400.0 Q413.7,384.0 500.0,354.2" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M253.3,400.0 Q394.9,457.7 446.4,564.8" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
-<path d="M253.3,400.0 Q413.7,416.0 500.0,445.8" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0.2"/>
+<path data-from="canopy.aggregator" data-to="canopy" d="M410.6,707.2 Q499.2,402.7 587.2,100.4" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0"/>
+<path data-from="canopy.aggregator" data-to="canopy.collectors" d="M410.6,707.2 Q468.7,542.5 500.0,500.0" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0"/>
+<path data-from="canopy.collectors" data-to="canopy" d="M500.0,500.0 Q530.5,330.1 587.2,100.4" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0"/>
+<path data-from="canopy.layout" data-to="canopy" d="M399.6,541.3 Q495.4,344.6 587.2,100.4" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0"/>
+<path data-from="canopy.render" data-to="canopy.layout" d="M267.0,481.0 Q383.3,477.8 399.6,541.3" fill="none" stroke="#58a6ff" stroke-width="0.8" opacity="0"/>
 <g data-module="canopy.config">
 <circle cx="500.0" cy="354.2" r="77.5" fill="#d2992255" opacity="0.1" filter="url(#softGlow)"/>
 <circle cx="501.0" cy="355.2" r="31.0" fill="#000000" opacity="0.3"/>
@@ -130,54 +120,55 @@
 <text x="454.2" y="445.0" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">18 loc</text>
 </g>
 <g data-module="canopy.collectors">
-<circle cx="580.9" cy="458.8" r="37.8" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="581.9" cy="459.8" r="15.1" fill="#000000" opacity="0.3"/>
-<circle cx="580.9" cy="458.8" r="15.1" fill="#2ea043" filter="url(#nodeGlow)"/>
-<circle cx="580.9" cy="454.2" r="9.1" fill="#56d364" opacity="0.15"/>
-<circle cx="578.6" cy="453.5" r="3.0" fill="#ffffff" opacity="0.08"/>
-<circle cx="581.5" cy="457.6" r="2.4" fill="#1b1f23" opacity="0.7"/>
-<circle cx="580.2" cy="457.6" r="2.2" fill="#1b1f23" opacity="0.7"/>
-<circle cx="580.9" cy="459.5" r="1.6" fill="#1b1f23" opacity="0.7"/>
-<circle cx="577.3" cy="460.2" r="2.1" fill="#1b1f23" opacity="0.7"/>
-<circle cx="581.8" cy="458.1" r="2.9" fill="#1b1f23" opacity="0.7"/>
-<circle cx="578.8" cy="466.8" r="1.8" fill="#1b1f23" opacity="0.7"/>
-<text x="580.9" y="458.8" font-family="monospace" font-size="8" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">collector..</text>
+<circle cx="500.0" cy="500.0" r="37.8" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="501.0" cy="501.0" r="15.1" fill="#000000" opacity="0.3"/>
+<circle cx="500.0" cy="500.0" r="15.1" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="500.0" cy="495.5" r="9.1" fill="#56d364" opacity="0.15"/>
+<circle cx="497.7" cy="494.7" r="3.0" fill="#ffffff" opacity="0.08"/>
+<circle cx="498.7" cy="499.6" r="2.9" fill="#1b1f23" opacity="0.7"/>
+<circle cx="504.6" cy="496.7" r="1.7" fill="#1b1f23" opacity="0.7"/>
+<circle cx="493.6" cy="504.6" r="2.8" fill="#1b1f23" opacity="0.7"/>
+<circle cx="500.4" cy="504.7" r="2.9" fill="#1b1f23" opacity="0.7"/>
+<circle cx="500.5" cy="498.8" r="2.8" fill="#1b1f23" opacity="0.7"/>
+<circle cx="505.6" cy="493.9" r="2.7" fill="#1b1f23" opacity="0.7"/>
+<text x="500.0" y="500.0" font-family="monospace" font-size="8" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">collector..</text>
 </g>
 <g data-module="canopy.layout">
-<circle cx="446.4" cy="564.8" r="37.7" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="447.4" cy="565.8" r="15.1" fill="#000000" opacity="0.3"/>
-<circle cx="446.4" cy="564.8" r="15.1" fill="#2ea043" filter="url(#nodeGlow)"/>
-<circle cx="446.4" cy="560.3" r="9.1" fill="#56d364" opacity="0.15"/>
-<circle cx="444.2" cy="559.6" r="3.0" fill="#ffffff" opacity="0.08"/>
-<text x="446.4" y="564.8" font-family="monospace" font-size="8" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">layout</text>
+<circle cx="399.6" cy="541.3" r="37.2" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="400.6" cy="542.3" r="14.9" fill="#000000" opacity="0.3"/>
+<circle cx="399.6" cy="541.3" r="14.9" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="399.6" cy="536.8" r="8.9" fill="#56d364" opacity="0.15"/>
+<circle cx="397.3" cy="536.1" r="3.0" fill="#ffffff" opacity="0.08"/>
+<text x="399.6" y="541.3" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">layout</text>
 </g>
 <g data-module="canopy.render">
-<circle cx="253.3" cy="400.0" r="73.1" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="254.3" cy="401.0" r="29.2" fill="#000000" opacity="0.3"/>
-<circle cx="253.3" cy="400.0" r="29.2" fill="#2ea043" filter="url(#nodeGlow)"/>
-<circle cx="253.3" cy="391.2" r="17.6" fill="#56d364" opacity="0.15"/>
-<circle cx="248.9" cy="389.8" r="5.9" fill="#ffffff" opacity="0.08"/>
-<circle cx="259.3" cy="398.9" r="1.5" fill="#1b1f23" opacity="0.7"/>
-<text x="253.3" y="400.0" font-family="monospace" font-size="9" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">render</text>
-<text x="253.3" y="443.3" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">1521 loc</text>
+<circle cx="267.0" cy="481.0" r="74.1" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="268.0" cy="482.0" r="29.6" fill="#000000" opacity="0.3"/>
+<circle cx="267.0" cy="481.0" r="29.6" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="267.0" cy="472.1" r="17.8" fill="#56d364" opacity="0.15"/>
+<circle cx="262.6" cy="470.7" r="5.9" fill="#ffffff" opacity="0.08"/>
+<circle cx="259.3" cy="478.8" r="2.1" fill="#1b1f23" opacity="0.7"/>
+<circle cx="279.4" cy="485.8" r="1.5" fill="#1b1f23" opacity="0.7"/>
+<text x="267.0" y="481.0" font-family="monospace" font-size="9" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">render</text>
+<text x="267.0" y="524.7" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">1562 loc</text>
 </g>
 <g data-module="canopy.aggregator">
-<circle cx="466.6" cy="81.8" r="28.6" fill="#d2992255" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="467.6" cy="82.8" r="11.4" fill="#000000" opacity="0.3"/>
-<circle cx="466.6" cy="81.8" r="11.4" fill="#d29922" filter="url(#nodeGlow)"/>
-<circle cx="466.6" cy="78.3" r="6.9" fill="#e3b341" opacity="0.15"/>
-<circle cx="464.8" cy="77.7" r="2.3" fill="#ffffff" opacity="0.08"/>
-<text x="466.6" y="81.8" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">aggregato..</text>
+<circle cx="410.6" cy="707.2" r="28.6" fill="#d2992255" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="411.6" cy="708.2" r="11.4" fill="#000000" opacity="0.3"/>
+<circle cx="410.6" cy="707.2" r="11.4" fill="#d29922" filter="url(#nodeGlow)"/>
+<circle cx="410.6" cy="703.8" r="6.9" fill="#e3b341" opacity="0.15"/>
+<circle cx="408.8" cy="703.2" r="2.3" fill="#ffffff" opacity="0.08"/>
+<text x="410.6" y="707.2" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">aggregato..</text>
 </g>
 <g data-module="canopy">
-<circle cx="708.8" cy="168.1" r="25.0" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="709.8" cy="169.1" r="10.0" fill="#000000" opacity="0.3"/>
-<circle cx="708.8" cy="168.1" r="10.0" fill="#2ea043" filter="url(#nodeGlow)"/>
-<circle cx="708.8" cy="165.1" r="6.0" fill="#56d364" opacity="0.15"/>
-<circle cx="707.3" cy="164.6" r="2.0" fill="#ffffff" opacity="0.08"/>
-<text x="708.8" y="168.1" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">canopy</text>
+<circle cx="587.2" cy="100.4" r="25.0" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="588.2" cy="101.4" r="10.0" fill="#000000" opacity="0.3"/>
+<circle cx="587.2" cy="100.4" r="10.0" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="587.2" cy="97.4" r="6.0" fill="#56d364" opacity="0.15"/>
+<circle cx="585.7" cy="96.9" r="2.0" fill="#ffffff" opacity="0.08"/>
+<text x="587.2" y="100.4" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">canopy</text>
 </g>
 <circle cx="500.0" cy="400.0" r="86.8" fill="none" stroke="#da3633" stroke-width="0.5" stroke-dasharray="4 6" opacity="0.3"><animateTransform attributeName="transform" type="rotate" from="0 500.0 400.0" to="360 500.0 400.0" dur="60s" repeatCount="indefinite"/></circle>
-<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2914 lines | 78% healthy 22% moderate 0% complex | 11 dead</text>
+<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2944 lines | 78% healthy 22% moderate 0% complex | 12 dead</text>
 <text x="985.0" y="790.0" font-family="monospace" font-size="10" fill="#161b22" text-anchor="end" dy="0.35em">canopy-code</text>
 </svg>

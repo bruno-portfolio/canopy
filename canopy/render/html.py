@@ -100,7 +100,7 @@ def _html_template(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>canopy — {esc_name} orbital view</title>
+<title>canopy-code — {esc_name} orbital view</title>
 <style>
   * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 
@@ -310,6 +310,17 @@ def _html_template(
     filter: brightness(1.5) drop-shadow(0 0 8px rgba(88,166,255,0.5));
   }}
 
+  /* Dependency hover highlight */
+  .dep-highlight {{
+    opacity: 0.35 !important;
+    transition: opacity 0.15s ease;
+  }}
+
+  .dep-dim {{
+    opacity: 0.08 !important;
+    transition: opacity 0.15s ease;
+  }}
+
   .tooltip {{
     position: fixed;
     background: #161b22;
@@ -491,7 +502,7 @@ def _html_template(
 
 <div class="container">
   <div class="header">
-    <h1>canopy</h1>
+    <h1>canopy-code</h1>
     <span class="badge">{esc_name}</span>
     <span class="badge">{n_modules} modules</span>
     <span class="badge">{n_lines} lines</span>
@@ -577,7 +588,10 @@ const svgEl = document.querySelector('#canvas svg');
 let pinned = null;
 
 svgEl.addEventListener('mousemove', function(e) {{
-  if (pinned) return;
+  if (pinned) {{
+    positionTooltip(e.clientX, e.clientY);
+    return;
+  }}
   var g = e.target.closest('[data-module]');
   if (!g) {{ tooltip.classList.remove('visible'); return; }}
   showTooltip(g.dataset.module, e.clientX, e.clientY);
@@ -589,10 +603,11 @@ svgEl.addEventListener('mouseleave', function() {{
 
 svgEl.addEventListener('click', function(e) {{
   var g = e.target.closest('[data-module]');
-  if (!g) {{ pinned = null; tooltip.classList.remove('visible'); return; }}
-  if (pinned === g.dataset.module) {{ pinned = null; tooltip.classList.remove('visible'); return; }}
+  if (!g) {{ pinned = null; tooltip.classList.remove('visible'); hideDeps(); return; }}
+  if (pinned === g.dataset.module) {{ pinned = null; tooltip.classList.remove('visible'); hideDeps(); return; }}
   pinned = g.dataset.module;
   showTooltip(g.dataset.module, e.clientX, e.clientY);
+  showDeps(g.dataset.module);
 }});
 
 function showTooltip(name, cx, cy) {{
@@ -606,7 +621,7 @@ function showTooltip(name, cx, cy) {{
   miEl.textContent = m.mi + '/100';
   miEl.style.color = miColor(m.mi);
   document.getElementById('tt-cc').textContent = m.cc;
-  document.getElementById('tt-dead').textContent = m.dead > 0 ? m.dead + ' functions' : 'None';
+  document.getElementById('tt-dead').textContent = m.dead > 0 ? m.dead + ' functions' : '0';
   document.getElementById('tt-churn').textContent = m.churn + ' commits';
   document.getElementById('tt-layer').textContent = m.layer;
 
@@ -615,6 +630,10 @@ function showTooltip(name, cx, cy) {{
   bar.style.background = miColor(m.mi);
 
   tooltip.classList.add('visible');
+  positionTooltip(cx, cy);
+}}
+
+function positionTooltip(cx, cy) {{
   var left = cx + 16;
   var top = cy - 16;
   if (left + 240 > window.innerWidth) left = cx - 240;
@@ -807,6 +826,7 @@ document.addEventListener('keydown', function(e) {{
     filterModules('');
     pinned = null;
     tooltip.classList.remove('visible');
+    hideDeps();
     sidebar.classList.remove('open');
     shortcutsOverlay.classList.remove('visible');
   }} else if (e.key === 'r' || e.key === 'R') {{
@@ -821,6 +841,64 @@ document.addEventListener('keydown', function(e) {{
 shortcutsOverlay.addEventListener('click', function(e) {{
   if (e.target === shortcutsOverlay) shortcutsOverlay.classList.remove('visible');
 }});
+
+// --- Dependency hover highlight ---
+var depPaths = svgEl.querySelectorAll('path[data-from]');
+var currentDepModule = null;
+
+function showDeps(moduleName) {{
+  if (currentDepModule === moduleName) return;
+  currentDepModule = moduleName;
+  depPaths.forEach(function(p) {{
+    if (p.dataset.from === moduleName || p.dataset.to === moduleName) {{
+      p.classList.add('dep-highlight');
+      p.classList.remove('dep-dim');
+    }} else {{
+      p.classList.remove('dep-highlight');
+      p.classList.add('dep-dim');
+    }}
+  }});
+  // Dim non-connected modules
+  svgEl.querySelectorAll('[data-module]').forEach(function(g) {{
+    var name = g.dataset.module;
+    if (name === moduleName) return;
+    var connected = false;
+    depPaths.forEach(function(p) {{
+      if ((p.dataset.from === moduleName && p.dataset.to === name) ||
+          (p.dataset.to === moduleName && p.dataset.from === name)) {{
+        connected = true;
+      }}
+    }});
+    if (!connected) {{
+      g.classList.add('dep-dim');
+    }} else {{
+      g.classList.remove('dep-dim');
+    }}
+  }});
+}}
+
+function hideDeps() {{
+  currentDepModule = null;
+  depPaths.forEach(function(p) {{
+    p.classList.remove('dep-highlight');
+    p.classList.remove('dep-dim');
+  }});
+  svgEl.querySelectorAll('[data-module]').forEach(function(g) {{
+    g.classList.remove('dep-dim');
+  }});
+}}
+
+svgEl.addEventListener('mouseover', function(e) {{
+  if (pinned) return;
+  var g = e.target.closest('[data-module]');
+  if (g) showDeps(g.dataset.module);
+  else hideDeps();
+}});
+
+svgEl.addEventListener('mouseleave', function() {{
+  if (!pinned) hideDeps();
+}});
+
 </script>
 </body>
 </html>
