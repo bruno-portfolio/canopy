@@ -108,13 +108,25 @@ def _html_template(
     background: #06080c;
     color: #c9d1d9;
     font-family: monospace;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+  }}
+
+  @supports (height: 100dvh) {{
+    body {{ height: 100dvh; }}
   }}
 
   .container {{
     max-width: 1200px;
     margin: 0 auto;
-    padding: 32px 24px;
+    padding: 16px 24px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }}
+
+  @supports (height: 100dvh) {{
+    .container {{ height: 100dvh; }}
   }}
 
   .header {{
@@ -140,17 +152,55 @@ def _html_template(
     color: #7d8590;
   }}
 
+  .search-box {{
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 6px;
+  }}
+
+  #search-input {{
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: monospace;
+    color: #c9d1d9;
+    width: 160px;
+    outline: none;
+  }}
+
+  #search-input:focus {{
+    border-color: #58a6ff;
+  }}
+
+  #search-count {{
+    font-size: 10px;
+    color: #7d8590;
+  }}
+
+  #search-clear {{
+    background: none;
+    border: none;
+    color: #7d8590;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    display: none;
+  }}
+
   .subtitle {{
     font-size: 12px;
     color: #484f58;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     letter-spacing: 0.5px;
   }}
 
   .legend {{
     display: flex;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     flex-wrap: wrap;
   }}
 
@@ -191,6 +241,8 @@ def _html_template(
     border-radius: 12px;
     overflow: hidden;
     cursor: grab;
+    flex: 1;
+    min-height: 0;
   }}
 
   .orbital-container:active {{
@@ -201,6 +253,8 @@ def _html_template(
     width: 100%;
     height: 100%;
     display: block;
+    transform-origin: 0 0;
+    will-change: transform;
   }}
 
   [data-module] {{
@@ -212,14 +266,13 @@ def _html_template(
     filter: brightness(1.5) drop-shadow(0 0 12px rgba(255,255,255,0.2));
   }}
 
-  /* Disable expensive filters during zoom/pan for smooth interaction */
-  .interacting svg * {{
-    filter: none !important;
-    transition: none !important;
+  .search-dim {{
+    opacity: 0.12;
+    pointer-events: none;
   }}
-  .interacting svg animate,
-  .interacting svg animateTransform {{
-    animation-play-state: paused;
+
+  .search-highlight {{
+    filter: brightness(1.5) drop-shadow(0 0 8px rgba(88,166,255,0.5));
   }}
 
   .tooltip {{
@@ -249,12 +302,13 @@ def _html_template(
   .stats-bar {{
     display: flex;
     gap: 32px;
-    margin-top: 20px;
-    padding: 16px 20px;
+    margin-top: 8px;
+    padding: 10px 20px;
     background: #0d1117;
     border: 1px solid #21262d;
     border-radius: 8px;
     flex-wrap: wrap;
+    flex-shrink: 0;
   }}
 
   .stat {{ display: flex; flex-direction: column; gap: 4px; }}
@@ -263,6 +317,139 @@ def _html_template(
   .stat-value.green {{ color: {healthy_base}; }}
   .stat-value.yellow {{ color: {moderate_base}; }}
   .stat-value.red {{ color: {complex_base}; }}
+
+  #sidebar-toggle {{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 20;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #7d8590;
+    cursor: pointer;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }}
+
+  #sidebar-toggle:hover {{
+    color: #e6edf3;
+  }}
+
+  #sidebar {{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 240px;
+    height: 100%;
+    background: #161b22ee;
+    border-left: 1px solid #30363d;
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+  }}
+
+  #sidebar.open {{
+    transform: translateX(0);
+  }}
+
+  .sidebar-header {{
+    padding: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e6edf3;
+    border-bottom: 1px solid #30363d;
+  }}
+
+  #sidebar-list {{
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+  }}
+
+  #sidebar-list::-webkit-scrollbar {{
+    width: 4px;
+  }}
+
+  #sidebar-list::-webkit-scrollbar-thumb {{
+    background: #30363d;
+    border-radius: 2px;
+  }}
+
+  .sidebar-item {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #c9d1d9;
+    cursor: pointer;
+  }}
+
+  .sidebar-item:hover {{
+    background: #1a1f2b;
+  }}
+
+  .sidebar-mi {{
+    font-weight: 600;
+    font-size: 10px;
+  }}
+
+  #shortcuts-overlay {{
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+  }}
+
+  #shortcuts-overlay.visible {{
+    display: flex;
+  }}
+
+  .shortcuts-modal {{
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 280px;
+  }}
+
+  .shortcuts-modal h2 {{
+    font-size: 14px;
+    color: #e6edf3;
+    margin-bottom: 16px;
+  }}
+
+  .shortcuts-grid {{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    align-items: center;
+  }}
+
+  .shortcuts-grid kbd {{
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: monospace;
+    color: #e6edf3;
+  }}
+
+  .shortcuts-grid span {{
+    font-size: 12px;
+    color: #7d8590;
+  }}
 </style>
 </head>
 <body>
@@ -273,6 +460,11 @@ def _html_template(
     <span class="badge">{esc_name}</span>
     <span class="badge">{n_modules} modules</span>
     <span class="badge">{n_lines} lines</span>
+    <div class="search-box">
+      <input id="search-input" placeholder="Search modules..." />
+      <span id="search-count"></span>
+      <button id="search-clear">&times;</button>
+    </div>
   </div>
   <p class="subtitle">ORBITAL CODE HEALTH</p>
 
@@ -286,6 +478,11 @@ def _html_template(
   </div>
 
   <div class="orbital-container" id="canvas">
+    <button id="sidebar-toggle">&#9776;</button>
+    <div id="sidebar">
+      <div class="sidebar-header">Modules</div>
+      <div id="sidebar-list"></div>
+    </div>
     {svg}
   </div>
 
@@ -312,8 +509,32 @@ def _html_template(
   <div class="tt-bar"><div class="tt-bar-fill" id="tt-bar"></div></div>
 </div>
 
+<div id="shortcuts-overlay">
+  <div class="shortcuts-modal">
+    <h2>Keyboard Shortcuts</h2>
+    <div class="shortcuts-grid">
+      <kbd>/</kbd><span>Search modules</span>
+      <kbd>Esc</kbd><span>Close / Clear</span>
+      <kbd>R</kbd><span>Reset zoom</span>
+      <kbd>M</kbd><span>Module list</span>
+      <kbd>?</kbd><span>This help</span>
+    </div>
+  </div>
+</div>
+
 <script>
 const DATA = {json_data};
+
+// --- Constants ---
+const MI_HEALTHY = {theme.mi_healthy};
+const MI_MODERATE = {theme.mi_moderate};
+const HEALTHY_COLOR = '{healthy_base}';
+const MODERATE_COLOR = '{moderate_base}';
+const COMPLEX_COLOR = '{complex_base}';
+
+function miColor(mi) {{
+  return mi >= MI_HEALTHY ? HEALTHY_COLOR : mi >= MI_MODERATE ? MODERATE_COLOR : COMPLEX_COLOR;
+}}
 
 // --- Tooltip ---
 const tooltip = document.getElementById('tooltip');
@@ -346,7 +567,9 @@ function showTooltip(name, cx, cy) {{
   document.getElementById('tt-desc').textContent = m.desc || '';
   document.getElementById('tt-lines').textContent = m.lines.toLocaleString();
   document.getElementById('tt-funcs').textContent = m.funcs;
-  document.getElementById('tt-mi').textContent = m.mi + '/100';
+  var miEl = document.getElementById('tt-mi');
+  miEl.textContent = m.mi + '/100';
+  miEl.style.color = miColor(m.mi);
   document.getElementById('tt-cc').textContent = m.cc;
   document.getElementById('tt-dead').textContent = m.dead > 0 ? m.dead + ' functions' : 'None';
   document.getElementById('tt-churn').textContent = m.churn + ' commits';
@@ -354,7 +577,7 @@ function showTooltip(name, cx, cy) {{
 
   var bar = document.getElementById('tt-bar');
   bar.style.width = m.mi + '%';
-  bar.style.background = m.mi >= {theme.mi_healthy} ? '{healthy_base}' : m.mi >= {theme.mi_moderate} ? '{moderate_base}' : '{complex_base}';
+  bar.style.background = miColor(m.mi);
 
   tooltip.classList.add('visible');
   var left = cx + 16;
@@ -365,64 +588,185 @@ function showTooltip(name, cx, cy) {{
   tooltip.style.top = top + 'px';
 }}
 
-// --- Zoom & Pan ---
-var viewBox = svgEl.viewBox.baseVal;
-var isPanning = false;
-var startPoint = {{ x: 0, y: 0 }};
-var startViewBox = {{ x: 0, y: 0 }};
-
+// --- Zoom & Pan (CSS transform — GPU accelerated, no SVG re-render) ---
 var container = document.getElementById('canvas');
+var scale = 1;
+var panX = 0;
+var panY = 0;
+var isPanning = false;
+var startX = 0;
+var startY = 0;
+var startPanX = 0;
+var startPanY = 0;
 
-// Throttle helper — limit re-renders during zoom/pan
-var interactTimer = null;
-function startInteraction() {{
-  container.classList.add('interacting');
-  clearTimeout(interactTimer);
+function applyTransform() {{
+  svgEl.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
 }}
-function endInteraction() {{
-  clearTimeout(interactTimer);
-  interactTimer = setTimeout(function() {{
-    container.classList.remove('interacting');
-  }}, 200);
+
+function resetZoom() {{
+  scale = 1; panX = 0; panY = 0; isPanning = false;
+  svgEl.style.transition = 'transform 0.3s ease';
+  applyTransform();
+  setTimeout(function() {{ svgEl.style.transition = ''; }}, 300);
 }}
 
 container.addEventListener('wheel', function(e) {{
   e.preventDefault();
-  startInteraction();
-  var scale = e.deltaY > 0 ? 1.1 : 0.9;
-  var rect = svgEl.getBoundingClientRect();
-  var mx = (e.clientX - rect.left) / rect.width;
-  var my = (e.clientY - rect.top) / rect.height;
-
-  var newW = viewBox.width * scale;
-  var newH = viewBox.height * scale;
-  viewBox.x += (viewBox.width - newW) * mx;
-  viewBox.y += (viewBox.height - newH) * my;
-  viewBox.width = newW;
-  viewBox.height = newH;
-  endInteraction();
+  var factor = e.deltaY > 0 ? 0.9 : 1.1;
+  var rect = container.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+  panX = mx - (mx - panX) * factor;
+  panY = my - (my - panY) * factor;
+  scale *= factor;
+  applyTransform();
 }}, {{ passive: false }});
 
 container.addEventListener('mousedown', function(e) {{
   if (e.button !== 0) return;
   isPanning = true;
-  startInteraction();
-  startPoint = {{ x: e.clientX, y: e.clientY }};
-  startViewBox = {{ x: viewBox.x, y: viewBox.y }};
+  startX = e.clientX;
+  startY = e.clientY;
+  startPanX = panX;
+  startPanY = panY;
 }});
 
 window.addEventListener('mousemove', function(e) {{
   if (!isPanning) return;
-  var rect = svgEl.getBoundingClientRect();
-  var dx = (e.clientX - startPoint.x) / rect.width * viewBox.width;
-  var dy = (e.clientY - startPoint.y) / rect.height * viewBox.height;
-  viewBox.x = startViewBox.x - dx;
-  viewBox.y = startViewBox.y - dy;
+  panX = startPanX + (e.clientX - startX);
+  panY = startPanY + (e.clientY - startY);
+  applyTransform();
 }});
 
 window.addEventListener('mouseup', function() {{
-  if (isPanning) endInteraction();
   isPanning = false;
+}});
+
+container.addEventListener('dblclick', function() {{
+  resetZoom();
+}});
+
+// --- Search / Filter ---
+var searchInput = document.getElementById('search-input');
+var searchCount = document.getElementById('search-count');
+var searchClear = document.getElementById('search-clear');
+
+function filterModules(query) {{
+  var groups = svgEl.querySelectorAll('[data-module]');
+  var matches = 0;
+  query = query.toLowerCase();
+  groups.forEach(function(g) {{
+    var name = g.dataset.module.toLowerCase();
+    if (!query || name.includes(query)) {{
+      g.classList.remove('search-dim');
+      if (query) {{ g.classList.add('search-highlight'); matches++; }}
+      else {{ g.classList.remove('search-highlight'); }}
+    }} else {{
+      g.classList.add('search-dim');
+      g.classList.remove('search-highlight');
+    }}
+  }});
+  searchCount.textContent = query ? matches + ' found' : '';
+  searchClear.style.display = query ? 'block' : 'none';
+  filterSidebarList(query);
+}}
+
+searchInput.addEventListener('input', function() {{
+  filterModules(this.value);
+}});
+
+searchClear.addEventListener('click', function() {{
+  searchInput.value = '';
+  filterModules('');
+  searchInput.focus();
+}});
+
+// --- Sidebar ---
+var sidebar = document.getElementById('sidebar');
+var sidebarToggle = document.getElementById('sidebar-toggle');
+var sidebarList = document.getElementById('sidebar-list');
+
+function buildSidebarList() {{
+  var entries = Object.keys(DATA.modules).map(function(name) {{
+    return {{ name: name, mi: DATA.modules[name].mi }};
+  }}).sort(function(a, b) {{ return a.mi - b.mi; }});
+  sidebarList.innerHTML = '';
+  entries.forEach(function(e) {{
+    var item = document.createElement('div');
+    item.className = 'sidebar-item';
+    item.dataset.module = e.name;
+    item.innerHTML = '<span>' + e.name + '</span><span class="sidebar-mi" style="color:' + miColor(e.mi) + '">' + e.mi + '</span>';
+    item.addEventListener('click', function() {{ zoomToModule(e.name); }});
+    sidebarList.appendChild(item);
+  }});
+}}
+
+function filterSidebarList(query) {{
+  query = query.toLowerCase();
+  var items = sidebarList.querySelectorAll('.sidebar-item');
+  items.forEach(function(item) {{
+    item.style.display = item.dataset.module.toLowerCase().includes(query) || !query ? '' : 'none';
+  }});
+}}
+
+function toggleSidebar() {{
+  sidebar.classList.toggle('open');
+}}
+
+function zoomToModule(name) {{
+  var g = document.querySelector('[data-module="' + name + '"]');
+  if (!g) return;
+  var bbox = g.getBBox();
+  var cx = bbox.x + bbox.width / 2;
+  var cy = bbox.y + bbox.height / 2;
+  var rect = container.getBoundingClientRect();
+  scale = 3;
+  panX = rect.width / 2 - cx * scale;
+  panY = rect.height / 2 - cy * scale;
+  svgEl.style.transition = 'transform 0.3s ease';
+  applyTransform();
+  setTimeout(function() {{ svgEl.style.transition = ''; }}, 300);
+  pinned = name;
+  showTooltip(name, rect.left + rect.width / 2, rect.top + rect.height / 2);
+}}
+
+sidebarToggle.addEventListener('click', toggleSidebar);
+buildSidebarList();
+
+// --- Keyboard Shortcuts ---
+var shortcutsOverlay = document.getElementById('shortcuts-overlay');
+
+document.addEventListener('keydown', function(e) {{
+  var tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') {{
+    if (e.key === 'Escape') {{
+      searchInput.value = '';
+      filterModules('');
+      searchInput.blur();
+    }}
+    return;
+  }}
+  if (e.key === '/' || (e.ctrlKey && e.key === 'f')) {{
+    e.preventDefault();
+    searchInput.focus();
+  }} else if (e.key === 'Escape') {{
+    searchInput.value = '';
+    filterModules('');
+    pinned = null;
+    tooltip.classList.remove('visible');
+    sidebar.classList.remove('open');
+    shortcutsOverlay.classList.remove('visible');
+  }} else if (e.key === 'r' || e.key === 'R') {{
+    resetZoom();
+  }} else if (e.key === 'm' || e.key === 'M') {{
+    toggleSidebar();
+  }} else if (e.key === '?') {{
+    shortcutsOverlay.classList.toggle('visible');
+  }}
+}});
+
+shortcutsOverlay.addEventListener('click', function(e) {{
+  if (e.target === shortcutsOverlay) shortcutsOverlay.classList.remove('visible');
 }});
 </script>
 </body>
