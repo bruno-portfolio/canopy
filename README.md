@@ -1,7 +1,9 @@
-# Canopy
+# Canopy Code
 
+[![PyPI](https://img.shields.io/pypi/v/canopy-code)](https://pypi.org/project/canopy-code/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org)
 [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://github.com/bruno-portfolio/canopy-code/actions/workflows/ci.yml/badge.svg)](https://github.com/bruno-portfolio/canopy-code/actions/workflows/ci.yml)
 
 **Orbital SVG visualizations of codebase health.**
 
