@@ -36,3 +36,24 @@ class ProjectData:
     dependencies: list[Dependency] = field(default_factory=list)
     layers: list[Layer] = field(default_factory=list)
     project_name: str = ""
+
+
+@dataclass(frozen=True)
+class NodePosition:
+    name: str
+    x: float
+    y: float
+    radius: float
+
+
+@dataclass(frozen=True)
+class RingPosition:
+    layer_name: str
+    radius: float
+    label: str
+
+
+@dataclass(frozen=True)
+class LayoutResult:
+    nodes: list[NodePosition] = field(default_factory=list)
+    rings: list[RingPosition] = field(default_factory=list)
