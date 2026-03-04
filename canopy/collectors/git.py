@@ -4,7 +4,6 @@ import subprocess
 import warnings
 from collections import Counter
 
-from canopy import exceptions
 from canopy.collectors import RawChurnResult, normalize_path
 
 _TIMEOUT_SECONDS = 60
@@ -13,7 +12,7 @@ _TIMEOUT_SECONDS = 60
 def _run_git(
     args: list[str],
     cwd: str,
-) -> subprocess.CompletedProcess[str]:
+) -> subprocess.CompletedProcess[str] | None:
     try:
         return subprocess.run(
             args,
@@ -22,10 +21,8 @@ def _run_git(
             cwd=cwd,
             timeout=_TIMEOUT_SECONDS,
         )
-    except FileNotFoundError as err:
-        raise exceptions.CollectorError("git not found") from err
-    except subprocess.TimeoutExpired as err:
-        raise exceptions.CollectorError(f"git timed out after {_TIMEOUT_SECONDS} seconds") from err
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
 
 
 def _is_shallow_clone(project_path: str) -> bool:
@@ -33,7 +30,7 @@ def _is_shallow_clone(project_path: str) -> bool:
         ["git", "rev-parse", "--is-shallow-repository"],
         cwd=project_path,
     )
-    return proc.stdout.strip() == "true"
+    return proc is not None and proc.stdout.strip() == "true"
 
 
 def _parse_file_counts(stdout: str) -> Counter[str]:
@@ -53,8 +50,13 @@ def collect_churn(
         ["git", "rev-parse", "--git-dir"],
         cwd=project_path,
     )
-    if check.returncode != 0:
-        raise exceptions.CollectorError("not a git repository")
+    if check is None or check.returncode != 0:
+        reason = "git not available" if check is None else "not a git repository"
+        warnings.warn(
+            f"{reason} — churn data unavailable",
+            stacklevel=2,
+        )
+        return []
 
     if _is_shallow_clone(project_path):
         warnings.warn(
@@ -75,6 +77,8 @@ def collect_churn(
         ],
         cwd=project_path,
     )
+    if proc is None:
+        return []
 
     counts = _parse_file_counts(proc.stdout)
 

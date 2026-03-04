@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import subprocess
+from unittest.mock import MagicMock
+
 import pytest
 
 from canopy.config import (
@@ -11,6 +14,14 @@ from canopy.config import (
     VultureConfig,
 )
 from canopy.models import Module
+
+
+def make_proc(returncode: int = 0, stdout: str = "", stderr: str = "") -> MagicMock:
+    proc = MagicMock(spec=subprocess.CompletedProcess)
+    proc.returncode = returncode
+    proc.stdout = stdout
+    proc.stderr = stderr
+    return proc
 
 
 @pytest.fixture

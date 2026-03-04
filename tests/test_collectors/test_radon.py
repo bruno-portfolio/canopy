@@ -2,20 +2,13 @@ from __future__ import annotations
 
 import json
 import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from canopy.collectors.radon import collect_radon
 from canopy.exceptions import CollectorError
-
-
-def _make_proc(returncode: int = 0, stdout: str = "{}", stderr: str = "") -> MagicMock:
-    proc = MagicMock(spec=subprocess.CompletedProcess)
-    proc.returncode = returncode
-    proc.stdout = stdout
-    proc.stderr = stderr
-    return proc
+from tests.conftest import make_proc
 
 
 class TestHappyPath:
@@ -34,8 +27,8 @@ class TestHappyPath:
             ]
         }
         mock_run.side_effect = [
-            _make_proc(stdout=json.dumps(mi_data)),
-            _make_proc(stdout=json.dumps(cc_data)),
+            make_proc(stdout=json.dumps(mi_data)),
+            make_proc(stdout=json.dumps(cc_data)),
         ]
 
         results = collect_radon("src")
@@ -51,8 +44,8 @@ class TestHappyPath:
     @patch("canopy.collectors.radon.subprocess.run")
     def test_empty_project(self, mock_run):
         mock_run.side_effect = [
-            _make_proc(stdout="{}"),
-            _make_proc(stdout="{}"),
+            make_proc(stdout="{}"),
+            make_proc(stdout="{}"),
         ]
 
         results = collect_radon("src")
@@ -77,7 +70,7 @@ class TestErrorHandling:
 
     @patch("canopy.collectors.radon.subprocess.run")
     def test_nonzero_exit(self, mock_run):
-        mock_run.return_value = _make_proc(returncode=1, stderr="error msg")
+        mock_run.return_value = make_proc(returncode=1, stderr="error msg")
 
         with pytest.raises(CollectorError, match="radon failed"):
             collect_radon("src")
@@ -89,8 +82,8 @@ class TestPathNormalization:
         mi_data = {"src\\app.py": {"mi": 50.0, "rank": "B"}}
         cc_data = {"src\\app.py": []}
         mock_run.side_effect = [
-            _make_proc(stdout=json.dumps(mi_data)),
-            _make_proc(stdout=json.dumps(cc_data)),
+            make_proc(stdout=json.dumps(mi_data)),
+            make_proc(stdout=json.dumps(cc_data)),
         ]
 
         results = collect_radon("src")
@@ -104,8 +97,8 @@ class TestFunctions:
         mi_data = {"src/constants.py": {"mi": 100.0, "rank": "A"}}
         cc_data: dict[str, list[str]] = {}
         mock_run.side_effect = [
-            _make_proc(stdout=json.dumps(mi_data)),
-            _make_proc(stdout=json.dumps(cc_data)),
+            make_proc(stdout=json.dumps(mi_data)),
+            make_proc(stdout=json.dumps(cc_data)),
         ]
 
         results = collect_radon("src")
@@ -123,8 +116,8 @@ class TestFunctions:
             ]
         }
         mock_run.side_effect = [
-            _make_proc(stdout=json.dumps(mi_data)),
-            _make_proc(stdout=json.dumps(cc_data)),
+            make_proc(stdout=json.dumps(mi_data)),
+            make_proc(stdout=json.dumps(cc_data)),
         ]
 
         results = collect_radon("src")

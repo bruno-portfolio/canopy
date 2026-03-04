@@ -1,21 +1,14 @@
 from __future__ import annotations
 
 import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from canopy.collectors import RawVultureResult
 from canopy.collectors.vulture import collect_vulture
 from canopy.exceptions import CollectorError
-
-
-def _make_proc(returncode: int = 0, stdout: str = "", stderr: str = "") -> MagicMock:
-    proc = MagicMock(spec=subprocess.CompletedProcess)
-    proc.returncode = returncode
-    proc.stdout = stdout
-    proc.stderr = stderr
-    return proc
+from tests.conftest import make_proc
 
 
 class TestHappyPath:
@@ -25,7 +18,7 @@ class TestHappyPath:
             "src/app.py:10: unused function 'old_handler' (60% confidence)\n"
             "src/utils.py:25: unused variable 'temp' (80% confidence)\n"
         )
-        mock_run.return_value = _make_proc(returncode=3, stdout=output)
+        mock_run.return_value = make_proc(returncode=3, stdout=output)
 
         results = collect_vulture("src")
 
@@ -47,7 +40,7 @@ class TestHappyPath:
 
     @patch("canopy.collectors.vulture.subprocess.run")
     def test_no_dead_code_exit_0(self, mock_run):
-        mock_run.return_value = _make_proc(returncode=0)
+        mock_run.return_value = make_proc(returncode=0)
 
         results = collect_vulture("src")
 
@@ -64,7 +57,7 @@ class TestErrorHandling:
 
     @patch("canopy.collectors.vulture.subprocess.run")
     def test_error_exit_1(self, mock_run):
-        mock_run.return_value = _make_proc(returncode=1, stderr="crash")
+        mock_run.return_value = make_proc(returncode=1, stderr="crash")
 
         with pytest.raises(CollectorError, match="vulture failed"):
             collect_vulture("src")
@@ -81,7 +74,7 @@ class TestParsing:
     @patch("canopy.collectors.vulture.subprocess.run")
     def test_confidence_filtering(self, mock_run):
         output = "src/app.py:1: unused function 'f' (90% confidence)\n"
-        mock_run.return_value = _make_proc(returncode=3, stdout=output)
+        mock_run.return_value = make_proc(returncode=3, stdout=output)
 
         results = collect_vulture("src", min_confidence=80)
 
@@ -101,7 +94,7 @@ class TestParsing:
             "a.py:6: unused property 'p' (60% confidence)",
             "a.py:7: unused attribute 'a' (60% confidence)",
         ]
-        mock_run.return_value = _make_proc(returncode=3, stdout="\n".join(lines))
+        mock_run.return_value = make_proc(returncode=3, stdout="\n".join(lines))
 
         results = collect_vulture("src")
 
@@ -123,7 +116,7 @@ class TestParsing:
             "src/app.py:10: unused function 'f' (60% confidence)\n"
             "another garbage\n"
         )
-        mock_run.return_value = _make_proc(returncode=3, stdout=output)
+        mock_run.return_value = make_proc(returncode=3, stdout=output)
 
         results = collect_vulture("src")
 
