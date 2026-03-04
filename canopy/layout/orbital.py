@@ -8,6 +8,7 @@ from canopy.layout.collapse import collapse_overflow
 from canopy.models import LayoutResult, Module, NodePosition, ProjectData, RingPosition
 
 _CORE_NODE_RADIUS = 35.0
+_CORE_ORBIT_SCALE = 1.4  # Multi-core orbit radius = node_radius * scale
 _MIN_NODE_RADIUS = 10.0
 _MAX_NODE_RADIUS = 32.0
 _NODE_SCALE = 0.75
@@ -61,17 +62,27 @@ def compute_layout(project_data: ProjectData, cfg: Config) -> LayoutResult:
 
     nodes: list[NodePosition] = []
 
-    # Step 2 — Core nodes
+    # Step 2 — Core nodes (distributed in small orbit when multiple)
     if core_layer and core_layer in ring_modules:
-        for m in ring_modules[core_layer]:
+        core_mods = ring_modules[core_layer]
+        count = len(core_mods)
+        if count == 1:
             nodes.append(
-                NodePosition(
-                    name=m.name,
-                    x=0.0,
-                    y=0.0,
-                    radius=_CORE_NODE_RADIUS,
-                )
+                NodePosition(name=core_mods[0].name, x=0.0, y=0.0, radius=_CORE_NODE_RADIUS)
             )
+        else:
+            # Spread around a small orbit so labels don't overlap
+            orbit_r = _CORE_NODE_RADIUS * _CORE_ORBIT_SCALE
+            for i, m in enumerate(core_mods):
+                angle = 2 * math.pi * i / count - math.pi / 2
+                nodes.append(
+                    NodePosition(
+                        name=m.name,
+                        x=math.cos(angle) * orbit_r,
+                        y=math.sin(angle) * orbit_r,
+                        radius=_node_radius(m.lines, is_core=True),
+                    )
+                )
 
     # Step 3 — Overflow collapse per ring
     for idx, layer_name in enumerate(non_core_layers):

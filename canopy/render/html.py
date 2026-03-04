@@ -243,6 +243,7 @@ def _html_template(
     cursor: grab;
     flex: 1;
     min-height: 0;
+    contain: layout paint;
   }}
 
   .orbital-container:active {{
@@ -264,6 +265,40 @@ def _html_template(
 
   [data-module]:hover {{
     filter: brightness(1.5) drop-shadow(0 0 12px rgba(255,255,255,0.2));
+  }}
+
+  /* Perf: shared rules for .is-moving (during interaction) and .zoomed-in (scale > 1.5).
+     Filter IDs must match svg.py _render_defs(). */
+  .is-moving [data-module],
+  .is-moving #canvas svg circle,
+  .zoomed-in [data-module],
+  .zoomed-in #canvas svg circle[filter] {{
+    filter: none !important;
+  }}
+
+  .is-moving #canvas svg circle[filter*="softGlow"],
+  .is-moving #canvas svg circle[filter*="churnPulse"],
+  .zoomed-in #canvas svg circle[filter*="softGlow"],
+  .zoomed-in #canvas svg circle[filter*="churnPulse"] {{
+    visibility: hidden !important;
+  }}
+
+  /* .is-moving only: hide deps & pause CSS animations during drag/wheel */
+  .is-moving #canvas svg line,
+  .is-moving #canvas svg path {{
+    filter: none !important;
+    animation-play-state: paused !important;
+  }}
+
+  .is-moving #canvas svg line,
+  .is-moving #canvas svg path[fill="none"] {{
+    visibility: hidden !important;
+  }}
+
+  /* .zoomed-in only: pause SVG DOM animations */
+  .zoomed-in #canvas svg animate,
+  .zoomed-in #canvas svg animateTransform {{
+    animation-play-state: paused !important;
   }}
 
   .search-dim {{
@@ -601,6 +636,22 @@ var startPanY = 0;
 
 function applyTransform() {{
   svgEl.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+  var zoomed = scale > 1.5;
+  if (zoomed !== wasZoomedIn) {{
+    root.classList.toggle('zoomed-in', zoomed);
+    wasZoomedIn = zoomed;
+  }}
+}}
+
+// --- Performance: disable filters during interaction ---
+var moveTimer = null;
+var root = document.querySelector('.container');
+var wasZoomedIn = false;
+
+function startMoving() {{
+  if (!root.classList.contains('is-moving')) root.classList.add('is-moving');
+  clearTimeout(moveTimer);
+  moveTimer = setTimeout(function() {{ root.classList.remove('is-moving'); }}, 150);
 }}
 
 function resetZoom() {{
@@ -612,6 +663,7 @@ function resetZoom() {{
 
 container.addEventListener('wheel', function(e) {{
   e.preventDefault();
+  startMoving();
   var factor = e.deltaY > 0 ? 0.9 : 1.1;
   var rect = container.getBoundingClientRect();
   var mx = e.clientX - rect.left;
@@ -633,6 +685,7 @@ container.addEventListener('mousedown', function(e) {{
 
 window.addEventListener('mousemove', function(e) {{
   if (!isPanning) return;
+  startMoving();
   panX = startPanX + (e.clientX - startX);
   panY = startPanY + (e.clientY - startY);
   applyTransform();

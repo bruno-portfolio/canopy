@@ -27,7 +27,7 @@ def _pd(
 
 
 class TestCorePositioning:
-    def test_core_at_origin(self):
+    def test_single_core_at_origin(self):
         pd = _pd([_mod("app", 500, layer="core")])
         result = compute_layout(pd, _cfg())
         core = [n for n in result.nodes if n.name == "app"]
@@ -40,6 +40,18 @@ class TestCorePositioning:
         result = compute_layout(pd, _cfg())
         core = [n for n in result.nodes if n.name == "app"]
         assert core[0].radius == 35.0
+
+    def test_multiple_cores_spread(self):
+        mods = [_mod(f"core{i}", 100, layer="core") for i in range(4)]
+        pd = _pd(mods)
+        result = compute_layout(pd, _cfg())
+        core = [n for n in result.nodes if n.name.startswith("core")]
+        assert len(core) == 4
+        # No two core nodes should overlap
+        for i, a in enumerate(core):
+            for b in core[i + 1 :]:
+                dist = math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+                assert dist > 0, f"{a.name} and {b.name} overlap at same position"
 
 
 class TestNodeRadius:
@@ -172,7 +184,7 @@ class TestNoOverlap:
         mods = [_mod(f"m{i}", 10 + i * 5, layer="infra") for i in range(100)]
         pd = _pd(mods, layers)
         result = compute_layout(pd, _cfg())
-        non_core = [n for n in result.nodes if n.x != 0.0 or n.y != 0.0]
+        non_core = [n for n in result.nodes if n.name.startswith("m")]
         for i, a in enumerate(non_core):
             for b in non_core[i + 1 :]:
                 dist = math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
