@@ -5,9 +5,11 @@ from collections import defaultdict
 
 from canopy.models import Dependency, Module, ProjectData
 
+COLLAPSED_PREFIX = "_collapsed_"
+
 
 def _collapsed_name(layer: str) -> str:
-    return f"_collapsed_{layer}"
+    return f"{COLLAPSED_PREFIX}{layer}"
 
 
 def _make_collapsed(layer_name: str, modules: list[Module]) -> Module:

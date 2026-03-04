@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800">
+<defs>
+<radialGradient id="bgGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#111820"/><stop offset="50%" stop-color="#0a0e14"/><stop offset="100%" stop-color="#06080c"/></radialGradient>
+<filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+<filter id="churnPulse" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1000" height="800" fill="url(#bgGrad)"/>
+<circle cx="973.5" cy="761.5" r="0.6" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="374.6" cy="286.8" r="0.8" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="682.3" cy="310.7" r="0.6" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="518.5" cy="777.4" r="0.7" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="323.9" cy="645.7" r="0.4" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="184.3" cy="568.6" r="0.6" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="193.3" cy="105.8" r="1.1" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="298.3" cy="437.2" r="0.7" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="475.3" cy="714.5" r="1.0" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="632.9" cy="677.1" r="1.0" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="499.2" cy="430.9" r="0.9" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="861.3" cy="295.0" r="0.3" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="170.9" cy="370.0" r="0.8" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="635.1" cy="40.1" r="0.6" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="737.7" cy="467.2" r="1.0" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="536.8" cy="675.8" r="0.5" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="356.0" cy="76.1" r="0.3" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="93.6" cy="350.2" r="0.8" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="138.9" cy="205.4" r="1.1" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="44.0" cy="291.7" r="0.4" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="604.7" cy="633.1" r="1.0" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="263.8" cy="238.8" r="0.3" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="726.8" cy="574.4" r="0.4" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="44.5" cy="184.8" r="0.7" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="132.7" cy="336.9" r="0.8" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="266.0" cy="188.7" r="0.4" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="203.7" cy="118.6" r="0.5" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="552.0" cy="435.3" r="0.8" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="783.6" cy="178.4" r="1.0" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="248.8" cy="258.8" r="0.8" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="430.4" cy="312.7" r="0.7" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="64.2" cy="412.3" r="0.9" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="478.1" cy="654.2" r="0.8" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="663.5" cy="691.2" r="0.8" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="377.5" cy="278.9" r="0.3" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="187.8" cy="768.5" r="0.5" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="41.4" cy="595.4" r="0.4" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="150.6" cy="264.2" r="1.0" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="942.0" cy="698.7" r="0.9" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="630.4" cy="400.3" r="0.6" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="544.7" cy="754.8" r="0.3" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="225.1" cy="259.8" r="1.0" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="205.8" cy="488.6" r="1.0" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="30.8" cy="136.3" r="1.1" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="271.5" cy="396.9" r="1.2" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="733.6" cy="200.3" r="1.1" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="501.9" cy="254.8" r="0.6" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="206.6" cy="697.8" r="0.6" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="46.7" cy="701.5" r="1.0" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="451.0" cy="35.3" r="0.7" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="868.4" cy="42.8" r="1.1" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="135.2" cy="269.2" r="0.6" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="667.5" cy="264.2" r="1.0" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="367.6" cy="23.2" r="1.1" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="321.6" cy="790.8" r="1.0" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="380.8" cy="562.3" r="1.2" fill="#c9d1d9" opacity="0.2"/>
+<circle cx="908.6" cy="309.8" r="0.4" fill="#c9d1d9" opacity="0.5"/>
+<circle cx="565.0" cy="337.7" r="0.4" fill="#c9d1d9" opacity="0.4"/>
+<circle cx="120.2" cy="149.7" r="0.5" fill="#c9d1d9" opacity="0.3"/>
+<circle cx="324.6" cy="131.5" r="0.7" fill="#c9d1d9" opacity="0.1"/>
+<circle cx="500.0" cy="400.0" r="200.0" fill="none" stroke="#bc8cff" stroke-width="0.5" opacity="0.3" stroke-dasharray="8 4"/>
+<text x="431.4" y="212.1" font-family="monospace" font-size="8" font-weight="600" fill="#484f58" text-anchor="start" transform="rotate(-70 431.4 212.1)">Infra</text>
+<circle cx="600.0" cy="450.0" r="50.0" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="601.0" cy="451.0" r="20.0" fill="#000000" opacity="0.3"/>
+<circle cx="600.0" cy="450.0" r="20.0" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="600.0" cy="444.0" r="12.0" fill="#56d364" opacity="0.15"/>
+<circle cx="597.0" cy="443.0" r="4.0" fill="#ffffff" opacity="0.08"/>
+<text x="600.0" y="450.0" font-family="monospace" font-size="8" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">foo</text>
+<text x="600.0" y="484.0" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">100 loc</text>
+<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">1 modules | 100 lines | 100% healthy 0% moderate 0% complex</text>
+<text x="985.0" y="790.0" font-family="monospace" font-size="10" fill="#161b22" text-anchor="end" dy="0.35em">canopy</text>
+</svg>
