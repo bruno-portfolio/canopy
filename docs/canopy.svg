@@ -152,14 +152,14 @@
 <text x="446.4" y="564.8" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">layout</text>
 </g>
 <g data-module="canopy.render">
-<circle cx="253.3" cy="400.0" r="61.8" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="254.3" cy="401.0" r="24.7" fill="#000000" opacity="0.3"/>
-<circle cx="253.3" cy="400.0" r="24.7" fill="#2ea043" filter="url(#nodeGlow)"/>
-<circle cx="253.3" cy="392.6" r="14.8" fill="#56d364" opacity="0.15"/>
-<circle cx="249.6" cy="391.4" r="4.9" fill="#ffffff" opacity="0.08"/>
-<circle cx="258.4" cy="399.1" r="1.5" fill="#1b1f23" opacity="0.7"/>
+<circle cx="253.3" cy="400.0" r="62.5" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="254.3" cy="401.0" r="25.0" fill="#000000" opacity="0.3"/>
+<circle cx="253.3" cy="400.0" r="25.0" fill="#2ea043" filter="url(#nodeGlow)"/>
+<circle cx="253.3" cy="392.5" r="15.0" fill="#56d364" opacity="0.15"/>
+<circle cx="249.6" cy="391.2" r="5.0" fill="#ffffff" opacity="0.08"/>
+<circle cx="258.5" cy="399.1" r="1.5" fill="#1b1f23" opacity="0.7"/>
 <text x="253.3" y="400.0" font-family="monospace" font-size="9" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">render</text>
-<text x="253.3" y="438.7" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">1085 loc</text>
+<text x="253.3" y="439.0" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">1112 loc</text>
 </g>
 <g data-module="canopy.aggregator">
 <circle cx="466.6" cy="81.8" r="28.1" fill="#2ea04355" opacity="0.1" filter="url(#softGlow)"/>
@@ -178,6 +178,6 @@
 <text x="708.8" y="168.1" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">canopy</text>
 </g>
 <circle cx="500.0" cy="400.0" r="50.0" fill="none" stroke="#da3633" stroke-width="0.5" stroke-dasharray="4 6" opacity="0.3"><animateTransform attributeName="transform" type="rotate" from="0 500.0 400.0" to="360 500.0 400.0" dur="60s" repeatCount="indefinite"/></circle>
-<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2368 lines | 100% healthy 0% moderate 0% complex | 11 dead</text>
+<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2395 lines | 100% healthy 0% moderate 0% complex | 11 dead</text>
 <text x="985.0" y="790.0" font-family="monospace" font-size="10" fill="#161b22" text-anchor="end" dy="0.35em">canopy</text>
 </svg>

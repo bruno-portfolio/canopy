@@ -212,6 +212,16 @@ def _html_template(
     filter: brightness(1.5) drop-shadow(0 0 12px rgba(255,255,255,0.2));
   }}
 
+  /* Disable expensive filters during zoom/pan for smooth interaction */
+  .interacting svg * {{
+    filter: none !important;
+    transition: none !important;
+  }}
+  .interacting svg animate,
+  .interacting svg animateTransform {{
+    animation-play-state: paused;
+  }}
+
   .tooltip {{
     position: fixed;
     background: #161b22;
@@ -363,8 +373,22 @@ var startViewBox = {{ x: 0, y: 0 }};
 
 var container = document.getElementById('canvas');
 
+// Throttle helper — limit re-renders during zoom/pan
+var interactTimer = null;
+function startInteraction() {{
+  container.classList.add('interacting');
+  clearTimeout(interactTimer);
+}}
+function endInteraction() {{
+  clearTimeout(interactTimer);
+  interactTimer = setTimeout(function() {{
+    container.classList.remove('interacting');
+  }}, 200);
+}}
+
 container.addEventListener('wheel', function(e) {{
   e.preventDefault();
+  startInteraction();
   var scale = e.deltaY > 0 ? 1.1 : 0.9;
   var rect = svgEl.getBoundingClientRect();
   var mx = (e.clientX - rect.left) / rect.width;
@@ -376,11 +400,13 @@ container.addEventListener('wheel', function(e) {{
   viewBox.y += (viewBox.height - newH) * my;
   viewBox.width = newW;
   viewBox.height = newH;
+  endInteraction();
 }}, {{ passive: false }});
 
 container.addEventListener('mousedown', function(e) {{
   if (e.button !== 0) return;
   isPanning = true;
+  startInteraction();
   startPoint = {{ x: e.clientX, y: e.clientY }};
   startViewBox = {{ x: viewBox.x, y: viewBox.y }};
 }});
@@ -395,6 +421,7 @@ window.addEventListener('mousemove', function(e) {{
 }});
 
 window.addEventListener('mouseup', function() {{
+  if (isPanning) endInteraction();
   isPanning = false;
 }});
 </script>
