@@ -22,8 +22,8 @@ jobs:
         with:
           fetch-depth: 0  # full history needed for git churn analysis
       - uses: bruno-portfolio/canopy-code@main
-        # Optional overrides:
         # with:
+        #   token: ${{ secrets.CANOPY_PAT }}  # PAT required if repo has required status checks on PRs
         #   strategy: push          # 'pr' (default) or 'push' for repos without branch protection
         #   output-svg: docs/canopy.svg
         #   output-html: docs/canopy.html
