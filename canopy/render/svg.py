@@ -419,9 +419,21 @@ def _render_core_decoration(ctx: _RenderContext) -> None:
     if not has_core:
         return
     t = ctx.theme
+    core_r = ctx.layout.core_orbit_radius
+    if core_r > 0:
+        # Compute decoration radius from orbit + largest core node + margin
+        core_nodes = [
+            n
+            for n in ctx.layout.nodes
+            if (m := ctx.module_map.get(n.name)) and m.layer == ctx.core_layer
+        ]
+        max_node_r = max((n.radius for n in core_nodes), default=0.0)
+        ring_r = core_r + max_node_r + 10.0
+    else:
+        ring_r = t.core_ring_radius
     ctx.parts.append(
         f'<circle cx="{_fmt(ctx.cx)}" cy="{_fmt(ctx.cy)}"'
-        f' r="{_fmt(t.core_ring_radius)}" fill="none"'
+        f' r="{_fmt(ring_r)}" fill="none"'
         f' stroke="{t.core_ring_stroke}" stroke-width="0.5"'
         f' stroke-dasharray="4 6" opacity="0.3">'
         f'<animateTransform attributeName="transform" type="rotate"'
@@ -471,7 +483,7 @@ def _render_watermark(ctx: _RenderContext) -> None:
         f'<text x="{_fmt(t.width - 15)}" y="{_fmt(t.height - 10)}"'
         f' font-family="monospace" font-size="10"'
         f' fill="{t.watermark_fill}" text-anchor="end"'
-        f' dy="0.35em">{escape("canopy")}</text>'
+        f' dy="0.35em">{escape("canopy-code")}</text>'
     )
 
 

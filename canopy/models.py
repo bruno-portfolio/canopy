@@ -57,3 +57,4 @@ class RingPosition:
 class LayoutResult:
     nodes: list[NodePosition] = field(default_factory=list)
     rings: list[RingPosition] = field(default_factory=list)
+    core_orbit_radius: float = 0.0

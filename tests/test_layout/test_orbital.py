@@ -5,8 +5,16 @@ import math
 import pytest
 
 from canopy.config import Config, OutputConfig
-from canopy.layout.orbital import _node_radius, compute_layout
-from canopy.models import Layer, LayoutResult, Module, ProjectData
+from canopy.layout.orbital import (
+    _core_node_radius,
+    _core_orbit_radius,
+    _min_first_ring_radius,
+    _node_radius,
+    _resolve_collisions,
+    _ring_node_radius,
+    compute_layout,
+)
+from canopy.models import Layer, LayoutResult, Module, NodePosition, ProjectData
 
 
 def _cfg(width: int = 1000, height: int = 800) -> Config:
@@ -26,6 +34,58 @@ def _pd(
     return ProjectData(modules=modules, layers=layers)
 
 
+def _dist(a: NodePosition, b: NodePosition) -> float:
+    return math.hypot(a.x - b.x, a.y - b.y)
+
+
+def _assert_no_overlap(nodes: list[NodePosition], tolerance: float = 1.0) -> None:
+    for i, a in enumerate(nodes):
+        for b in nodes[i + 1 :]:
+            d = _dist(a, b)
+            assert d >= a.radius + b.radius - tolerance, (
+                f"{a.name} and {b.name} overlap: dist={d:.1f}, min={a.radius + b.radius:.1f}"
+            )
+
+
+class TestCoreNodeRadius:
+    def test_single_core(self):
+        assert _core_node_radius(1) == 35.0
+
+    def test_two_cores(self):
+        assert _core_node_radius(2) == 35.0
+
+    def test_mid_range(self):
+        r = _core_node_radius(7)
+        assert 15.0 < r < 35.0
+
+    def test_twelve_plus_floor(self):
+        assert _core_node_radius(12) == 15.0
+        assert _core_node_radius(20) == 15.0
+
+
+class TestCoreOrbitRadius:
+    def test_single_returns_zero(self):
+        assert _core_orbit_radius(1, 35.0) == 0.0
+
+    def test_multiple_cores_positive(self):
+        r = _core_orbit_radius(4, 31.0)
+        assert r > 0
+
+    def test_ten_cores_fits(self):
+        node_r = _core_node_radius(10)
+        orbit_r = _core_orbit_radius(10, node_r)
+        assert orbit_r + node_r < 120
+
+
+class TestMinFirstRingRadius:
+    def test_small_core_uses_min(self):
+        assert _min_first_ring_radius(0.0, 35.0) == 100.0
+
+    def test_large_core_pushes_ring(self):
+        r = _min_first_ring_radius(80.0, 19.0)
+        assert r == 80.0 + 19.0 + 20.0
+
+
 class TestCorePositioning:
     def test_single_core_at_origin(self):
         pd = _pd([_mod("app", 500, layer="core")])
@@ -35,7 +95,7 @@ class TestCorePositioning:
         assert core[0].x == 0.0
         assert core[0].y == 0.0
 
-    def test_core_radius(self):
+    def test_single_core_radius(self):
         pd = _pd([_mod("app", 500, layer="core")])
         result = compute_layout(pd, _cfg())
         core = [n for n in result.nodes if n.name == "app"]
@@ -47,29 +107,57 @@ class TestCorePositioning:
         result = compute_layout(pd, _cfg())
         core = [n for n in result.nodes if n.name.startswith("core")]
         assert len(core) == 4
-        # No two core nodes should overlap
         for i, a in enumerate(core):
             for b in core[i + 1 :]:
-                dist = math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-                assert dist > 0, f"{a.name} and {b.name} overlap at same position"
+                assert _dist(a, b) > 0, f"{a.name} and {b.name} at same position"
+
+    def test_many_cores_no_overlap(self):
+        mods = [_mod(f"core{i}", 100, layer="core") for i in range(10)]
+        pd = _pd(mods)
+        result = compute_layout(pd, _cfg())
+        core = [n for n in result.nodes if n.name.startswith("core")]
+        assert len(core) == 10
+        _assert_no_overlap(core)
+
+    def test_core_orbit_radius_in_result(self):
+        mods = [_mod(f"core{i}", 100, layer="core") for i in range(4)]
+        pd = _pd(mods)
+        result = compute_layout(pd, _cfg())
+        assert result.core_orbit_radius > 0
+
+    def test_single_core_orbit_radius_zero(self):
+        pd = _pd([_mod("app", 500, layer="core")])
+        result = compute_layout(pd, _cfg())
+        assert result.core_orbit_radius == 0.0
 
 
 class TestNodeRadius:
     def test_formula(self):
-        r = _node_radius(400, False)
+        r = _node_radius(400)
         assert r == pytest.approx(math.sqrt(400) * 0.75)
 
     def test_clamp_min(self):
-        r = _node_radius(1, False)
+        r = _node_radius(1)
         assert r == 10.0
 
     def test_clamp_max(self):
-        r = _node_radius(10000, False)
+        r = _node_radius(10000)
         assert r == 32.0
 
-    def test_core_override(self):
-        r = _node_radius(1, True)
-        assert r == 35.0
+
+class TestRingNodeRadius:
+    def test_fits_no_shrink(self):
+        r = _ring_node_radius(20.0, 5, 200.0)
+        assert r == 20.0
+
+    def test_shrinks_when_dense(self):
+        r = _ring_node_radius(20.0, 30, 100.0)
+        assert r < 20.0
+        assert r >= 8.0
+
+    def test_floor(self):
+        r = _ring_node_radius(20.0, 200, 100.0)
+        assert r == 8.0
 
 
 class TestSingleRing:
@@ -79,11 +167,10 @@ class TestSingleRing:
         result = compute_layout(pd, _cfg())
         non_core = [n for n in result.nodes if n.name.startswith("m")]
         assert len(non_core) == 5
-        # All should be at roughly the same distance from center
-        dists = [math.sqrt(n.x**2 + n.y**2) for n in non_core]
+        dists = [math.hypot(n.x, n.y) for n in non_core]
         mean_dist = sum(dists) / len(dists)
         for d in dists:
-            assert d == pytest.approx(mean_dist, abs=30)  # jitter tolerance
+            assert d == pytest.approx(mean_dist, abs=30)
 
 
 class TestSorting:
@@ -92,7 +179,6 @@ class TestSorting:
         pd = _pd(mods)
         result = compute_layout(pd, _cfg())
         non_core = [n for n in result.nodes if not n.name.startswith("_")]
-        # big should come first in sector (earlier index = lower angle within sector)
         big_node = next(n for n in non_core if n.name == "big")
         small_node = next(n for n in non_core if n.name == "small")
         big_angle = math.atan2(big_node.y, big_node.x) % (2 * math.pi)
@@ -119,8 +205,7 @@ class TestRingRadii:
         small = compute_layout(pd, _cfg(500, 400))
         big_ring = big.rings[0].radius if big.rings else 0
         small_ring = small.rings[0].radius if small.rings else 0
-        # Both should have rings, but with only 1 non-core layer both start at MIN_RING_RADIUS
-        assert big_ring >= small_ring or big_ring == small_ring
+        assert big_ring >= small_ring
 
     def test_multiple_rings_radii(self):
         layers = [
@@ -170,7 +255,6 @@ class TestSectorProportional:
         result = compute_layout(pd, _cfg())
         infra_nodes = [n for n in result.nodes if n.name.startswith("infra")]
         api_nodes = [n for n in result.nodes if n.name.startswith("api")]
-        # Infra has 6/8 of total, api has 2/8 — infra should span wider angles
         infra_angles = sorted(math.atan2(n.y, n.x) for n in infra_nodes)
         api_angles = sorted(math.atan2(n.y, n.x) for n in api_nodes)
         infra_span = infra_angles[-1] - infra_angles[0]
@@ -185,10 +269,7 @@ class TestNoOverlap:
         pd = _pd(mods, layers)
         result = compute_layout(pd, _cfg())
         non_core = [n for n in result.nodes if n.name.startswith("m")]
-        for i, a in enumerate(non_core):
-            for b in non_core[i + 1 :]:
-                dist = math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-                assert dist >= a.radius + b.radius - 1.0  # 1px tolerance
+        _assert_no_overlap(non_core)
 
 
 class TestOverflowCollapse:
@@ -218,3 +299,64 @@ class TestRingPositions:
         for r in result.rings:
             layer = next(la for la in layers if la.name == r.layer_name)
             assert r.label == layer.label
+
+
+class TestCollisionAvoidance:
+    def test_overlapping_nodes_resolved(self):
+        nodes = [
+            NodePosition("a", 100.0, 0.0, 15.0),
+            NodePosition("b", 99.0, 5.0, 15.0),
+        ]
+        target_rs = [100.0, 100.0]
+        result = _resolve_collisions(nodes, target_rs)
+        assert _dist(result[0], result[1]) > 10.0
+
+    def test_origin_node_stays(self):
+        nodes = [
+            NodePosition("center", 0.0, 0.0, 20.0),
+            NodePosition("far", 100.0, 0.0, 20.0),
+        ]
+        target_rs = [0.0, 100.0]
+        result = _resolve_collisions(nodes, target_rs)
+        center = next(n for n in result if n.name == "center")
+        assert center.x == pytest.approx(0.0, abs=0.1)
+        assert center.y == pytest.approx(0.0, abs=0.1)
+
+
+class TestManyModulesStress:
+    def test_44_modules_10_core(self):
+        """Simulates agrobr-like project: 10 core + 34 non-core across 3 rings."""
+        layers = [
+            Layer("core", 0, "Core"),
+            Layer("domain", 1, "Domain"),
+            Layer("infra", 2, "Infra"),
+            Layer("api", 3, "API"),
+        ]
+        mods = [
+            *[_mod(f"core{i}", 80 + i * 10, layer="core") for i in range(10)],
+            *[_mod(f"domain{i}", 50 + i * 5, layer="domain") for i in range(15)],
+            *[_mod(f"infra{i}", 30 + i * 3, layer="infra") for i in range(12)],
+            *[_mod(f"api{i}", 20 + i * 2, layer="api") for i in range(7)],
+        ]
+        pd = _pd(mods, layers)
+        result = compute_layout(pd, _cfg())
+
+        core = [n for n in result.nodes if n.name.startswith("core")]
+        _assert_no_overlap(core, tolerance=2.0)
+        assert result.core_orbit_radius > 0
+
+    def test_first_ring_pushed_by_large_core(self):
+        """With many core nodes, first ring should be pushed outward."""
+        layers = [
+            Layer("core", 0, "Core"),
+            Layer("infra", 1, "Infra"),
+        ]
+        mods = [
+            *[_mod(f"core{i}", 100, layer="core") for i in range(10)],
+            _mod("m1", 50, layer="infra"),
+        ]
+        pd = _pd(mods, layers)
+        result = compute_layout(pd, _cfg())
+        ring = result.rings[0]
+        core_outer = result.core_orbit_radius + _core_node_radius(10)
+        assert ring.radius > core_outer
