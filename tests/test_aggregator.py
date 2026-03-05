@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from canopy.aggregator import _path_to_module, _truncate, aggregate
+from canopy.aggregator import _path_to_module, _process_vulture, _truncate, aggregate
 from canopy.collectors import (
     RawChurnResult,
     RawFunctionCC,
@@ -632,3 +632,54 @@ class TestModulesSortedAlphabetically:
 
         names = [m.name for m in result.modules]
         assert names == ["mypkg.alpha", "mypkg.mid", "mypkg.zebra"]
+
+
+# ---------------------------------------------------------------------------
+# Vulture exclude_types filtering
+# ---------------------------------------------------------------------------
+
+
+class TestVultureExcludeTypes:
+    def test_exclude_attribute_type(self):
+        results = [
+            RawVultureResult("src/mypkg/sub/a.py", 10, "attribute", "field_x", 60),
+            RawVultureResult("src/mypkg/sub/a.py", 20, "function", "old_func", 80),
+            RawVultureResult("src/mypkg/sub/a.py", 30, "variable", "tmp", 70),
+        ]
+        counts = _process_vulture(
+            results,
+            "src/mypkg/",
+            "mypkg",
+            2,
+            exclude_types=frozenset(["attribute"]),
+        )
+        assert counts == {"mypkg.sub": 2}
+
+    def test_exclude_multiple_types(self):
+        results = [
+            RawVultureResult("src/mypkg/sub/a.py", 10, "attribute", "field_x", 60),
+            RawVultureResult("src/mypkg/sub/a.py", 20, "function", "old_func", 80),
+            RawVultureResult("src/mypkg/sub/a.py", 30, "variable", "tmp", 70),
+        ]
+        counts = _process_vulture(
+            results,
+            "src/mypkg/",
+            "mypkg",
+            2,
+            exclude_types=frozenset(["attribute", "variable"]),
+        )
+        assert counts == {"mypkg.sub": 1}
+
+    def test_no_exclusion_counts_all(self):
+        results = [
+            RawVultureResult("src/mypkg/sub/a.py", 10, "attribute", "field_x", 60),
+            RawVultureResult("src/mypkg/sub/a.py", 20, "function", "old_func", 80),
+        ]
+        counts = _process_vulture(
+            results,
+            "src/mypkg/",
+            "mypkg",
+            2,
+            exclude_types=frozenset(),
+        )
+        assert counts == {"mypkg.sub": 2}

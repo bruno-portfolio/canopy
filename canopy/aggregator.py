@@ -127,9 +127,12 @@ def _process_vulture(
     root_package: str,
     depth: int,
     source_path: str = "",
+    exclude_types: frozenset[str] = frozenset(),
 ) -> dict[str, int]:
     counts: dict[str, int] = {}
     for result in vulture_results:
+        if result.kind in exclude_types:
+            continue
         module = _path_to_module(result.path, source_prefix, root_package, depth, source_path)
         counts[module] = counts.get(module, 0) + 1
     return counts
@@ -195,7 +198,14 @@ def aggregate(
         module_lines[module] = module_lines.get(module, 0) + lines
 
     radon_data = _process_radon(radon, file_data, prefix, root, depth, source_path)
-    vulture_data = _process_vulture(vulture, prefix, root, depth, source_path)
+    vulture_data = _process_vulture(
+        vulture,
+        prefix,
+        root,
+        depth,
+        source_path,
+        exclude_types=frozenset(cfg.vulture.exclude_types or []),
+    )
     churn_data = _process_churn(churn, prefix, root, depth, source_path)
     deps = _process_imports(imports, root, depth)
 
