@@ -86,7 +86,6 @@
 <circle cx="500.0" cy="344.9" r="18.6" fill="#e3b341" opacity="0.15"/>
 <circle cx="495.3" cy="343.3" r="6.2" fill="#ffffff" opacity="0.08"/>
 <circle cx="499.2" cy="369.4" r="2.1" fill="#1b1f23" opacity="0.7"/>
-<circle cx="500.0" cy="352.6" r="1.7" fill="#1b1f23" opacity="0.7"/>
 <text x="500.0" y="354.2" font-family="monospace" font-size="11" font-weight="700" fill="#c9d1d9" text-anchor="middle" dy="0.35em">config</text>
 <text x="500.0" y="399.2" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">159 loc</text>
 </g>
@@ -130,7 +129,6 @@
 <circle cx="493.6" cy="504.6" r="2.8" fill="#1b1f23" opacity="0.7"/>
 <circle cx="500.4" cy="504.7" r="2.9" fill="#1b1f23" opacity="0.7"/>
 <circle cx="500.5" cy="498.8" r="2.8" fill="#1b1f23" opacity="0.7"/>
-<circle cx="505.6" cy="493.9" r="2.7" fill="#1b1f23" opacity="0.7"/>
 <text x="500.0" y="500.0" font-family="monospace" font-size="8" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">collector..</text>
 </g>
 <g data-module="canopy.layout">
@@ -153,10 +151,10 @@
 <text x="267.0" y="524.7" font-family="monospace" font-size="7" fill="#484f58" text-anchor="middle" dy="0.35em">1562 loc</text>
 </g>
 <g data-module="canopy.aggregator">
-<circle cx="410.6" cy="707.2" r="28.6" fill="#d2992255" opacity="0.1" filter="url(#softGlow)"/>
-<circle cx="411.6" cy="708.2" r="11.4" fill="#000000" opacity="0.3"/>
-<circle cx="410.6" cy="707.2" r="11.4" fill="#d29922" filter="url(#nodeGlow)"/>
-<circle cx="410.6" cy="703.8" r="6.9" fill="#e3b341" opacity="0.15"/>
+<circle cx="410.6" cy="707.2" r="29.2" fill="#d2992255" opacity="0.1" filter="url(#softGlow)"/>
+<circle cx="411.6" cy="708.2" r="11.7" fill="#000000" opacity="0.3"/>
+<circle cx="410.6" cy="707.2" r="11.7" fill="#d29922" filter="url(#nodeGlow)"/>
+<circle cx="410.6" cy="703.7" r="7.0" fill="#e3b341" opacity="0.15"/>
 <circle cx="408.8" cy="703.2" r="2.3" fill="#ffffff" opacity="0.08"/>
 <text x="410.6" y="707.2" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">aggregato..</text>
 </g>
@@ -169,6 +167,6 @@
 <text x="587.2" y="100.4" font-family="monospace" font-size="7" font-weight="600" fill="#c9d1d9" text-anchor="middle" dy="0.35em">canopy</text>
 </g>
 <circle cx="500.0" cy="400.0" r="86.8" fill="none" stroke="#da3633" stroke-width="0.5" stroke-dasharray="4 6" opacity="0.3"><animateTransform attributeName="transform" type="rotate" from="0 500.0 400.0" to="360 500.0 400.0" dur="60s" repeatCount="indefinite"/></circle>
-<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2944 lines | 78% healthy 22% moderate 0% complex | 12 dead</text>
+<text x="500.0" y="780.0" font-family="monospace" font-size="9" fill="#30363d" text-anchor="middle" dy="0.35em">9 modules | 2954 lines | 78% healthy 22% moderate 0% complex | 10 dead</text>
 <text x="985.0" y="790.0" font-family="monospace" font-size="10" fill="#161b22" text-anchor="end" dy="0.35em">canopy-code</text>
 </svg>
